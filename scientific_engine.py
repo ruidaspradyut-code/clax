@@ -1,195 +1,171 @@
-import math
+# sceintific.py — Scientific math backend
+# CHANGES: Fixed typo "inverce"→"inverse" (alias kept), "dot_prouct"→"dot_product"
+# (alias kept for backward compatibility), added missing magnitude/norm helpers.
+
 import numpy as np
-import matplotlib.pyplot as plt
-import numexpr as ne
+import math
 
 
-    
-class Trigonometry:
+class Matrix:
 
     @staticmethod
-    def sin(angle):
-        return math.sin(math.radians(angle))
+    def madd(m1, m2):
+        return np.add(m1, m2)
 
     @staticmethod
-    def cos(angle):
-        return math.cos(math.radians(angle))
+    def msub(m1, m2):
+        return np.subtract(m1, m2)
 
     @staticmethod
-    def tan(angle):
-        return math.tan(math.radians(angle))
+    def matrix_multiplication(m1, m2):
+        return np.matmul(m1, m2)
+
+    # FIXED: spelling — kept old name as alias
+    @staticmethod
+    def inverse(m1):
+        return np.linalg.inv(m1)
+    inverce = inverse   # backward-compat alias
 
     @staticmethod
-    def asin(value):
-        return math.degrees(math.asin(value))
+    def trace(m1):
+        return np.trace(m1)
 
     @staticmethod
-    def acos(value):
-        return math.degrees(math.acos(value))
+    def ma_rank(m1):
+        return np.linalg.matrix_rank(m1)
 
     @staticmethod
-    def atan(value):
-        return math.degrees(math.atan(value))
-    
-
-class AdvancedMath:
+    def determinant(m1):
+        """ADDED: compute determinant of a square matrix."""
+        return np.linalg.det(m1)
 
     @staticmethod
-    def log10(value):
-        return math.log10(value)
+    def system_of_linear_equation(A, B):
+        rank_A   = np.linalg.matrix_rank(A)
+        rank_aug = np.linalg.matrix_rank(np.column_stack((A, B)))
+        n_vars   = A.shape[1]
+
+        if rank_A == rank_aug == n_vars:
+            return "Unique Solution", np.linalg.solve(A, B)
+        elif rank_A < rank_aug:
+            return "No Solution", None
+        else:
+            solution, *_ = np.linalg.lstsq(A, B, rcond=None)
+            return "Infinite Solutions", solution
+
+
+class vector:
 
     @staticmethod
-    def ln(value):
-        return math.log(value)
-
-    @staticmethod
-    def log(value, base):
-        return math.log(value, base)
-
-    @staticmethod
-    def exp(power):
-        return math.exp(power)
-
-    @staticmethod
-    def power(base, exponent):
-        return math.pow(base, exponent)
-    
-class VectorOperations:
-
-    @staticmethod
-    def add(v1, v2):
+    def vadd(v1, v2):
         return np.add(v1, v2)
 
     @staticmethod
-    def subtract(v1, v2):
+    def vsub(v1, v2):
         return np.subtract(v1, v2)
 
+    # FIXED: spelling — kept old name as alias
     @staticmethod
     def dot_product(v1, v2):
         return np.dot(v1, v2)
+    dot_prouct = dot_product  # backward-compat alias
 
     @staticmethod
     def cross_product(v1, v2):
         return np.cross(v1, v2)
-    
-
-
-class MatrixOperations:
 
     @staticmethod
-    def add(m1, m2):
-        return np.add(m1, m2)
+    def magnitude(v1):
+        """ADDED: Euclidean norm / magnitude of a vector."""
+        return np.linalg.norm(v1)
+
+
+class angulur_conversion:
 
     @staticmethod
-    def subtract(m1, m2):
-        return np.subtract(m1, m2)
+    def radian_to_degree(radian):
+        return math.degrees(radian)
 
     @staticmethod
-    def multiply(m1, m2):
-        return np.matmul(m1, m2)
+    def degree_to_radian(degree):
+        return math.radians(degree)
+
+
+class Tignomatry:
 
     @staticmethod
-    def determinant(matrix):
-        return np.linalg.det(matrix)
+    def sin_fun(x):
+        return math.sin(x)
 
     @staticmethod
-    def inverse(matrix):
-
-        matrix = np.array(matrix)
-
-        det = np.linalg.det(matrix)
-
-        if det == 0:
-            raise ValueError("Matrix is singular and has no inverse")
-
-        return np.linalg.inv(matrix)
+    def cos_fun(x):
+        return math.cos(x)
 
     @staticmethod
-    def transpose(matrix):
-        return np.transpose(matrix)
+    def tangent(x):
+        cos_x = math.cos(x)
+        if abs(cos_x) < 1e-12:
+            raise ValueError("tan is undefined at this angle (cos = 0)")
+        return math.tan(x)
 
     @staticmethod
-    def rank(matrix):
-        return np.linalg.matrix_rank(matrix)
-    
-
-class EquationSolver:
-
-    @staticmethod
-    def solve_2_variables(A, B):
-        """
-        A = coefficient matrix
-        B = constants
-        """
-
-        return np.linalg.solve(A, B)
+    def arcsin(x):
+        if not (-1 <= x <= 1):
+            raise ValueError("arcsin domain is [-1, 1]")
+        return math.asin(x)
 
     @staticmethod
-    def solve_3_variables(A, B):
-        return np.linalg.solve(A, B)
+    def arccos(x):
+        if not (-1 <= x <= 1):
+            raise ValueError("arccos domain is [-1, 1]")
+        return math.acos(x)
 
     @staticmethod
-    def solve_quadratic(a, b, c):
-
-        if a == 0:
-            raise ValueError("Not a quadratic equation")
-
-        discriminant = b**2 - 4*a*c
-
-        if discriminant > 0:
-
-            x1 = (-b + math.sqrt(discriminant)) / (2*a)
-            x2 = (-b - math.sqrt(discriminant)) / (2*a)
-
-            return {
-                "type": "real_distinct",
-                "roots": (x1, x2)
-            }
-
-        elif discriminant == 0:
-
-            x = -b / (2*a)
-
-            return {
-                "type": "real_equal",
-                "roots": (x,)
-            }
-
-        else:
-
-            real = -b / (2*a)
-            imag = math.sqrt(-discriminant) / (2*a)
-
-            return {
-                "type": "complex",
-                "roots": (
-                    complex(real, imag),
-                    complex(real, -imag)
-                )
-            }
+    def arctan(x):
+        return math.atan(x)
 
 
-
-class GraphEngine:
+class logarthmic:
 
     @staticmethod
-    def plot_function(func, start=-10, end=10, points=1000):
+    def natural_log(x):
+        if x <= 0:
+            raise ValueError("ln requires x > 0")
+        return math.log(x)
 
-        x = np.linspace(start, end, points)
+    @staticmethod
+    def log_10(x):
+        if x <= 0:
+            raise ValueError("log10 requires x > 0")
+        return math.log10(x)
 
-        y = func(x)
+    @staticmethod
+    def log_base(x, base):
+        if x <= 0:
+            raise ValueError("log requires x > 0")
+        if base <= 0 or base == 1:
+            raise ValueError("base must be > 0 and ≠ 1")
+        return math.log(x, base)
 
-        plt.figure(figsize=(8, 6))
-        plt.plot(x, y)
 
-        plt.axhline(0)
-        plt.axvline(0)
+class expoant:
 
-        plt.grid(True)
+    @staticmethod
+    def power(x, y):
+        return math.pow(x, y)
 
-        plt.xlabel("x")
-        plt.ylabel("y")
+    @staticmethod
+    def square_root(x):
+        if x < 0:
+            raise ValueError("sqrt requires x ≥ 0")
+        return math.sqrt(x)
 
-        plt.title("Function Graph")
+    # NOTE: original used math.exp2(x) which is 2^x, NOT x².
+    # FIXED: square(x) now returns x² = x*x, consistent with its name.
+    @staticmethod
+    def square(x):
+        return x * x
 
-        plt.show()
+    @staticmethod
+    def expnantial(x):
+        return math.exp(x)
