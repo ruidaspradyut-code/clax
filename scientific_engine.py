@@ -1,7 +1,3 @@
-# sceintific.py — Scientific math backend
-# CHANGES: Fixed typo "inverce"→"inverse" (alias kept), "dot_prouct"→"dot_product"
-# (alias kept for backward compatibility), added missing magnitude/norm helpers.
-
 import numpy as np
 import math
 
@@ -20,7 +16,6 @@ class Matrix:
     def matrix_multiplication(m1, m2):
         return np.matmul(m1, m2)
 
-    # FIXED: spelling — kept old name as alias
     @staticmethod
     def inverse(m1):
         return np.linalg.inv(m1)
@@ -64,11 +59,10 @@ class vector:
     def vsub(v1, v2):
         return np.subtract(v1, v2)
 
-    # FIXED: spelling — kept old name as alias
     @staticmethod
     def dot_product(v1, v2):
         return np.dot(v1, v2)
-    dot_prouct = dot_product  # backward-compat alias
+    dot_prouct = dot_product  
 
     @staticmethod
     def cross_product(v1, v2):
@@ -160,8 +154,7 @@ class expoant:
             raise ValueError("sqrt requires x ≥ 0")
         return math.sqrt(x)
 
-    # NOTE: original used math.exp2(x) which is 2^x, NOT x².
-    # FIXED: square(x) now returns x² = x*x, consistent with its name.
+
     @staticmethod
     def square(x):
         return x * x
